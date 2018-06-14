@@ -4,6 +4,8 @@ import javax.net.ssl.SSLServerSocketFactory;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -80,11 +82,58 @@ class ClientConnection implements Runnable
         }
     }
 
-    public void login(String login,String password)
+    public void login(String login,String password) throws IOException
     {
         if(login.equals("Antoni") && password.equals("Dzik"))
         {
             writer.println("OK");
+
+            String status = bufferedReader.readLine();
+            if(status.equals("Sync"))
+            {
+                List idsList = new ArrayList<Integer>();
+                writer.println("OK");
+                status = bufferedReader.readLine();
+                if(status.equals("Send")) {
+                    String readId = bufferedReader.readLine();
+                    while (!readId.equals("Endsend")) {
+                        idsList.add(Integer.parseInt(readId));
+                        readId = bufferedReader.readLine();
+                    }
+                    writer.println("OK");
+                    writer.println("Send");
+
+                    //sending first meal
+                    writer.println("2");    //id
+                    writer.println("Sniadanie"); //title
+                    writer.println("Bulka z maslem"); //summary
+                    writer.println("Posmarowac bulke maslem"); //description
+                    writer.println("12323234"); // date
+                    writer.println(""); //image path
+
+                    //end sending first meal
+                    writer.println("isNext");
+                    //sending second meal
+
+                    writer.println("3");    //id
+                    writer.println("Sniadanie"); //title
+                    writer.println("Bulka z serem"); //summary
+                    writer.println("Posmarowac bulke maslem,dodac ser"); //description
+                    writer.println("123234234"); // date
+                    writer.println(""); //image path
+
+                    //end sending second meal
+
+                    //end sending meals
+
+                    writer.println("Endsend");
+                }
+                else
+                {
+                    status = null;
+                }
+
+            }
         }else
         {
             writer.println("NOK");
